@@ -1,0 +1,2 @@
+wdksetup:-devcon
+tesseract

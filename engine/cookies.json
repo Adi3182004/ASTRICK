@@ -1,0 +1,350 @@
+[
+  {
+    "intent": "shutdown",
+    "user_input": ["shutdown the laptop", "turn off laptop", "shut down"],
+    "response": "Shutting down the laptop.",
+    "action": "shutdown"
+  },
+  {
+    "intent": "open_chrome",
+    "user_input": ["open chrome", "launch browser", "start google"],
+    "response": "Opening Chrome browser.",
+    "action": "open_app",
+    "path": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+  },
+  {
+    "intent": "greet",
+    "user_input": ["hello", "good morning", "hi", "hey"],
+    "response": "Hello! How can I assist you today?"
+  },
+  
+{
+  "intent": "about_astrick",
+  "user_input": [
+    "what is astrick",
+    "tell me about astrick",
+    "who are you",
+    "what can you do",
+    "introduce yourself",
+    "what does astrick mean",
+    "define astrick",
+    "wru",
+    "describe astrick"
+  ],
+  "response": "I'm Astrick, an AI assistant created by Aditya Andhalkar. ASTRICK stands for Advanced Sentient Technology for Real-time Intelligent Command and Knowledge. I'm designed to help you control your system, access information, and automate tasks in real time.",
+  "tts_override": "I'm Astrick, an AI assistant created by Aah...... dee...... tya...... Uhn...... dhull...... kar. A S T R I C K stands for Advanced Sentient Technology for Real-time Intelligent Command and Knowledge. I am designed to help you control your system, access information, and automate tasks in real time.",
+  "action": null
+},
+
+{
+  "user_input": [
+    "say my name",
+    "what's my name",
+    "tell my name",
+    "who am i",
+    "who is your creator",
+    "who made you",
+    "who built you",
+    "who created you",
+    "wmi"
+  ],
+   "response": "Aditya Andhalkar",
+  "tts_override": "Aah...... dee...... tya..... Uhn...... dhull..... kar.....",
+  "action": null
+},
+
+
+{
+  "intent": "get_weather",
+  "user_input": [
+    "what is the weather in *",
+    "what's the weather in *",
+    "weather in *",
+    "how's the weather in *",
+    "how is the weather in *",
+    "what is the current weather in *",
+    "what's the current weather in *",
+    "current weather in *"
+  ],
+  "response": "Getting the weather in {city}.",
+  "action": "weather"
+},
+{
+  "intent": "check_rain",
+  "user_input": [
+    "will it rain today",
+    "is it going to rain",
+    "chance of rain",
+    "is there rain today",
+    "when will it rain",
+    "what time will it rain"
+  ],
+  "response": "",
+  "action": "check_rain"
+},
+{
+  "user_input": [
+    "open recycle bin",
+    "check recycle bin",
+    "show recycle bin",
+    "recycle bin"
+  ],
+  "response": "",
+  "action": "recycle_bin"
+},
+{
+  "intent": "empty_recycle_bin",
+  "user_input": [
+    "empty recycle bin",
+    "delete everything from recycle bin",
+    "clear recycle bin"
+  ],
+  "response": "Deleting everything in recycle bin.",
+  "action": "empty_recycle_bin"
+},
+{
+  "intent": "restore_recycle_bin_all",
+  "user_input": [
+    "restore everything from recycle bin",
+    "recover all files",
+    "undo recycle bin"
+  ],
+  "response": "Restoring everything from recycle bin.",
+  "action": "restore_recycle_bin_all"
+},
+{
+  "intent": "restore_recycle_file",
+  "user_input": [
+    "restore * from recycle bin",
+    "recover * from recycle bin",
+    "get back * from recycle bin"
+  ],
+  "response": "Trying to restore {file} from recycle bin.",
+  "action": "restore_recycle_file"
+},
+{
+  "intent": "delete_recycle_file",
+  "user_input": [
+    "delete * from recycle bin",
+    "remove * from recycle bin",
+    "erase * from recycle bin"
+  ],
+  "response": "Deleting {file} from recycle bin.",
+  "action": "delete_recycle_file"
+},
+{
+  "intent": "delete_all_recycle_bin",
+  "user_input": [
+    "delete all from recycle bin",
+    "remove everything from recycle bin",
+    "erase all files from recycle bin"
+  ],
+  "response": "Deleting all files from recycle bin.",
+  "action": "delete_all_recycle_bin"
+},
+{
+  "intent": "check_temp",
+  "user_input": [
+    "what's the temperature",
+    "current temperature",
+    "how hot is it",
+    "how cold is it",
+    "temperature now"
+  ],
+  "response": "",
+  "action": "check_temp"
+},
+{
+  "intent": "check_cold",
+  "user_input": [
+    "why is it cold",
+    "why today is so cold",
+    "is it cold today",
+    "feels chilly today",
+    "why weather is cold"
+  ],
+  "response": "",
+  "action": "check_temp"
+},
+{
+  "intent": "check_hot",
+  "user_input": [
+    "why is it so hot",
+    "why today is so hot",
+    "is it hot today",
+    "feels hot today",
+    "why weather is hot"
+  ],
+  "response": "",
+  "action": "check_temp"
+},
+{
+  "intent": "read_pdf",
+  "user_input": [
+    "read * pdf",
+    "read pdf *",
+    "read *",
+    "open * pdf and read",
+    "open the * pdf and read",
+    "open * and read it for me",
+    "open the * and read it for me",
+    "open * pdf",
+    "read the * file"
+  ],
+  "response": "",
+  "action": "read_pdf"
+},
+{
+  "intent": "get_time",
+  "user_input": [
+    "what time is it",
+    "current time",
+    "tell me the time",
+    "what's the time now",
+    "time please"
+  ],
+  "response": "Getting the current time.",
+  "action": "get_time"
+},
+
+{
+  "intent": "play_youtube",
+  "user_input": [
+    "play * on youtube",
+    "play song * on youtube",
+    "search * on youtube",
+    "youtube and play song *",
+    "open youtube and play *",
+    "play * youtube",
+    "play * from youtube",
+    "play video * on youtube"
+  ],
+  "response": "Playing {yt_term} on YouTube.",
+  "action": "play_youtube"
+},
+
+{
+  "intent": "bluetooth_on",
+  "user_input": [
+    "turn on bluetooth",
+    "enable bluetooth",
+    "bluetooth on"
+  ],
+  "response": "",
+  "action": "bluetooth_on"
+},
+{
+  "intent": "bluetooth_off",
+  "user_input": [
+    "turn off bluetooth",
+    "disable bluetooth",
+    "bluetooth off"
+  ],
+  "response": "",
+  "action": "bluetooth_off"
+},
+{
+  "intent": "airplane_on",
+  "user_input": ["turn on airplane mode", "enable airplane mode"],
+  "response": "Turning on airplane mode.",
+  "action": "airplane_on"
+},
+{
+  "intent": "airplane_off",
+  "user_input": ["turn off airplane mode", "disable airplane mode"],
+  "response": "Turning off airplane mode.",
+  "action": "airplane_off"
+},
+{
+  "intent": "brightness_control",
+  "user_input": [
+    "set brightness to * percent",
+    "set brightness to *",
+    "brightness *",
+    "sbt *",
+    "change brightness to *"
+  ],
+  "response": "",
+  "action": "brightness_control"
+},
+{
+  "intent": "wifi_on",
+  "user_input": [
+    "turn on wifi",
+    "enable wifi",
+    "wifi on"
+  ],
+  "response": "Enabling Wi-Fi.",
+  "action": "wifi_on"
+},
+{
+  "intent": "wifi_off",
+  "user_input": [
+    "turn off wifi",
+    "disable wifi",
+    "wifi off"
+  ],
+  "response": "Disabling Wi-Fi.",
+  "action": "wifi_off"
+},
+{
+  "intent": "shutdown_system",
+  "user_input": [
+    "shutdown",
+    "turn off computer",
+    "power off",
+    "shut down"
+  ],
+  "response": "Shutting down the system.",
+  "action": "shutdown"
+},
+{
+  "intent": "restart_system",
+  "user_input": [
+    "restart",
+    "reboot computer",
+    "restart system"
+  ],
+  "response": "Restarting the computer.",
+  "action": "restart"
+},
+{
+  "intent": "microphone_on",
+  "user_input": [
+    "enable microphone",
+    "turn on mic",
+    "mic on"
+  ],
+  "response": "Microphone enabled.",
+  "action": "microphone_on"
+},
+{
+  "intent": "microphone_off",
+  "user_input": [
+    "disable microphone",
+    "turn off mic",
+    "mic off"
+  ],
+  "response": "Microphone disabled.",
+  "action": "microphone_off"
+},
+{
+  "intent": "open_folder",
+  "user_input": [
+    "open folder *",
+    "open * folder",
+    "access folder *",
+    "show folder *"
+  ],
+  "response": "Opening folder {folder_name}.",
+  "action": "open_folder"
+}
+
+
+
+
+
+
+
+
+]
