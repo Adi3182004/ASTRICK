@@ -382,7 +382,7 @@ def hotword():
     try:
         porcupine = pvporcupine.create(
             keyword_paths=[r"C:\Users\adity\ASTRICK\engine\astrick.ppn"],
-            access_key="vrNHVEul9wGhrr061OLCx/DiGkJjYbcLEhzs5lAF1mFEg3BRX13XxA=="
+            access_key="YOUR_ACCESS_KEY_HERE"
         )
 
         paud = pyaudio.PyAudio()
