@@ -8,9 +8,11 @@ Advanced Sentient Technology for Real-time Intelligent Command and Knowledge
 [![License](https://img.shields.io/badge/License-Educational-green?style=flat-square)](LICENSE)
 [![Status](https://img.shields.io/badge/Status-Prototype-orange?style=flat-square)](.)
 
+Production-style AI desktop voice assistant with wake word detection, natural language understanding, and real system automation
+
 ---
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Overview](#overview)
 - [Project Goal](#project-goal)
@@ -62,41 +64,41 @@ Build a production-grade, voice-driven desktop assistant that understands natura
 ## Core Features
 
 ### 🎙️ Advanced Voice Intelligence
-- Always-on Hotword Detection — Porcupine wake word engine
-- Continuous Listening Loop — Background monitoring without blocking
-- Multi-format Speech Recognition — Google Speech-to-Text with fallback
-- Natural Language Understanding — Context-aware command parsing
-- Real-time Voice Feedback — Instant audio confirmation
-- Speaker Identification — Voice profile recognition
+- Always-on Hotword Detection — Porcupine wake word engine with millisecond response
+- Continuous Listening Loop — Background monitoring without blocking system
+- Multi-format Speech Recognition — Google Speech-to-Text with fallback support
+- Natural Language Understanding — Context-aware command parsing and routing
+- Real-time Voice Feedback — Instant audio confirmation of commands
+- Speaker Identification — Voice profile recognition for personalization
 
 ### 💻 System Control & Automation
 - Wi-Fi Management — Toggle connectivity and network switching
 - Bluetooth Operations — Device pairing and connection control
-- Display Control — Brightness and resolution adjustment
+- Display Control — Brightness and resolution adjustment via voice
 - Application Launcher — Smart app detection and opening
 - Folder Navigation — File system browsing and file operations
-- Recycle Bin Management — Voice-controlled file restoration
+- Recycle Bin Management — Voice-controlled file restoration and cleanup
 
 ### 🎬 Entertainment & Media
 - YouTube Playback — Direct video search and streaming
-- Music Streaming — Integration with local and online services
-- PDF Reader — Document text extraction with voice narration
+- Music Streaming — Integration with local and online music services
+- PDF Reader — Document text extraction with live voice narration
 - Audio Processing — MP3 and audio file manipulation
 - Web Content — Browse and retrieve information from web
 
 ### 📱 Mobile Device Integration
 - WhatsApp Automation — Voice-controlled message sending
 - Phone Call Control — Dialing and call management via voice
-- Android ADB Bridge — Direct device control through USB
+- Android ADB Bridge — Direct device control through USB debugging
 - SMS Management — Text message composition and delivery
 - Contact Integration — Name-based dialing and communication
 
 ### 🔐 Advanced Security
-- Face Authentication — OpenCV-based facial recognition
+- Face Authentication — OpenCV-based facial recognition before access
 - Multi-factor Security — Biometric + voice verification
 - Privacy-first Architecture — All processing happens locally
 - No Cloud Dependency — Complete offline operation capability
-- Credential Management — Secure credential storage
+- Credential Management — Secure cookie-based authentication storage
 - Session Logging — Audit trail for security verification
 
 ### 🎨 Professional User Interface
@@ -104,36 +106,37 @@ Build a production-grade, voice-driven desktop assistant that understands natura
 - Real-time Status Indicators — Live system state visualization
 - Command History — Searchable voice command logs
 - Responsive Design — Works on desktop and tablet displays
-- Smooth Animations — Professional visual feedback
-- Clean Styling — Modern, polished appearance
+- Lottie Animations — Smooth, engaging visual feedback
+- Bootstrap Styling — Professional, polished appearance
 
 ---
 
 ## Tech Stack
 
 ### Backend Architecture
-- Python 3.12+ — Core programming language
-- Eel Framework — Python-JavaScript bridge
-- Porcupine SDK — Hotword detection engine
-- SpeechRecognition — Google Speech-to-Text
-- PyAutoGUI — System-level automation
-- PyAudio — Real-time audio processing
-- PyTTSx3 — Text-to-speech synthesis
-- OpenCV — Face detection and biometrics
-- SQLite — Local database for logging
+- **Python 3.12+** — Core programming language for stability
+- **Eel Framework** — Python-JavaScript bridge for web UI
+- **Porcupine SDK** — State-of-the-art hotword detection
+- **SpeechRecognition** — Google Speech-to-Text integration
+- **PyAutoGUI** — System-level GUI automation
+- **PyAudio** — Real-time audio input and processing
+- **PyTTSx3** — Text-to-speech synthesis with multiple voices
+- **OpenCV** — Face detection and biometric authentication
+- **SQLite** — Lightweight local database for logging
 
 ### System Integration
-- Windows API — Native system commands
-- ADB (Android Debug Bridge) — Mobile communication
-- Tesseract OCR — Character recognition for documents
-- Playsound — Audio playback for feedback
+- **Windows API** — Native system command execution
+- **ADB (Android Debug Bridge)** — Mobile device communication
+- **Tesseract OCR** — Optical character recognition
+- **Playsound** — Audio playback for feedback
 
 ### Frontend Technologies
-- HTML5 — Semantic markup
-- CSS3 — Modern styling
-- Vanilla JavaScript — Interactive logic
-- Bootstrap 5 — Responsive framework
-- WebSocket — Real-time communication
+- **HTML5** — Semantic markup structure
+- **CSS3** — Modern styling with animations
+- **Vanilla JavaScript** — Interactive frontend logic
+- **Bootstrap 5** — Responsive component framework
+- **Lottie** — Vector animation library
+- **WebSocket** — Real-time bidirectional communication
 
 ---
 
@@ -188,6 +191,7 @@ pip install eel pyttsx3 SpeechRecognition pyaudio pyautogui pvporcupine playsoun
 1. Download from: https://github.com/tesseract-ocr/tesseract/wiki/Downloads
 2. Install to default location
 3. Update path in `engine/features.py`:
+
 ```python
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 ```
@@ -196,14 +200,16 @@ pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tessera
 1. Download from: https://developer.android.com/studio/releases/platform-tools
 2. Extract to a known directory
 3. Update in `engine/features.py`:
+
 ```python
 ADB_PATH = r"C:\path\to\platform-tools\adb.exe"
 ```
 
 #### Porcupine Access Key
 1. Sign up at: https://picovoice.ai/
-2. Get free access key
+2. Get free access key from console
 3. Add to `engine/features.py`:
+
 ```python
 PORCUPINE_ACCESS_KEY = "YOUR_ACCESS_KEY_HERE"
 ```
@@ -220,7 +226,7 @@ SILENCE_THRESHOLD = 1000
 
 # Paths
 TESSERACT_PATH = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-ADB_PATH = r"C:\path\to\adb.exe"
+ADB_PATH = r"C:\path\to\platform-tools\adb.exe"
 
 # API Keys
 PORCUPINE_ACCESS_KEY = "your_key_here"
@@ -304,30 +310,28 @@ Continuous Audio Stream Input
                  ↓
 Hotword Detection Engine
 (Porcupine: "Okay jarvis" Recognition)
-         ↓
-    No Match    |    Match Found
-         ↓      |         ↓
-    Continue    |    Audio Capture Loop
-   Listening    |  (Record until pause)
-                |         ↓
-                |  Speech-to-Text
-                |  (Google STT Engine)
-                |         ↓
-                |  Command Router
-                |  (NLP Intent Parser)
-                |         ↓
-          System Ctrl  Media Ctrl  Mobile Ctrl
-          (PyAutoGUI) (Web APIs)  (ADB)
-                |         |          |
-                └────┬────┴────┬─────┘
-                     ↓
-              Action Execution
-              (OS Commands)
-                     ↓
-           Feedback Generation
-           (Voice + UI Update)
-                     ↓
-            Command Logging
+                 ↓
+           ↙ No Match ↘ Match Found
+           ↓                   ↓
+       Continue         Audio Capture Loop
+       Listening       (Record until pause)
+                               ↓
+                       Speech-to-Text
+                    (Google STT Engine)
+                               ↓
+                        Command Router
+                      (NLP Intent Parser)
+                               ↓
+          ↙ System Ctrl ↓ Media Ctrl ↘ Mobile Ctrl
+    (PyAutoGUI)    (Web APIs)      (ADB)
+                       ↓
+                Action Execution
+                 (OS Commands)
+                       ↓
+            Feedback Generation
+            (Voice + UI Update)
+                       ↓
+             Command Logging
             (SQLite Database)
 ```
 
@@ -372,44 +376,44 @@ eel.update_ui({
 
 #### hotword_listener()
 Continuously monitors audio stream for wake word
-- Input: Audio stream from microphone
-- Output: Boolean (True = wake word detected)
-- Latency: ~100ms per frame
+- **Input:** Audio stream from microphone
+- **Output:** Boolean (True = wake word detected)
+- **Latency:** ~100ms per frame
 
 #### listen_command()
 Captures and transcribes voice command
-- Input: Audio stream (after wake word)
-- Output: Transcribed text
-- Timeout: 5 seconds (configurable)
+- **Input:** Audio stream (after wake word)
+- **Output:** Transcribed text
+- **Timeout:** 5 seconds (configurable)
 
 #### route_command(command_text)
 Parses natural language and routes to handler
-- Input: User voice command text
-- Output: Action type + parameters
-- Logic: Keyword matching + intent detection
+- **Input:** User voice command text
+- **Output:** Action type + parameters
+- **Logic:** Keyword matching + intent detection
 
 #### execute_action(action_type, params)
 Executes system action based on command
-- Input: Action identifier + parameters
-- Output: Status + execution result
-- Supports: System, Media, Mobile, Utilities
+- **Input:** Action identifier + parameters
+- **Output:** Status + execution result
+- **Supports:** System, Media, Mobile, Utilities
 
 #### generate_feedback(result)
 Creates voice and visual feedback
-- Input: Execution result
-- Output: Spoken confirmation + UI update
+- **Input:** Execution result
+- **Output:** Spoken confirmation + UI update
 
 ### Command Routing Table
 
 | Pattern | Intent | Handler | Action |
 |---------|--------|---------|--------|
-| open [app] | App Launch | execute_app() | Launch application |
-| turn (on/off) [device] | Device Control | toggle_device() | Wi-Fi, Bluetooth |
-| set brightness to [0-100] | Display | set_brightness() | Screen adjustment |
-| search [query] | Web Search | web_search() | YouTube, Google |
-| send [message] to [contact] | Mobile | send_whatsapp() | WhatsApp, SMS |
-| what (time/weather) | Information | get_info() | System/internet |
-| read [file] | Document | read_pdf() | OCR + TTS |
+| `open [app]` | App Launch | `execute_app()` | Launch application |
+| `turn (on/off) [device]` | Device Control | `toggle_device()` | Wi-Fi, Bluetooth |
+| `set brightness to [0-100]` | Display Control | `set_brightness()` | Screen adjustment |
+| `search [query]` | Web Search | `web_search()` | YouTube, Google |
+| `send [message] to [contact]` | Mobile Messaging | `send_whatsapp()` | WhatsApp, SMS |
+| `what (time/weather)` | Information | `get_info()` | System/internet |
+| `read [file]` | Document Processing | `read_pdf()` | OCR + TTS |
 
 ---
 
@@ -486,28 +490,28 @@ Creates voice and visual feedback
 ## Performance Notes
 
 ### Audio Processing Optimization
-- Buffer Size: 4096 samples per frame (~90ms at 44.1kHz)
-- Sample Rate: 16kHz for hotword, 44.1kHz for TTS
-- Threading: Separate threads for listening vs processing
-- Frame Rate: 100ms hotword detection cycles
+- **Buffer Size:** 4096 samples per frame (~90ms at 44.1kHz)
+- **Sample Rate:** 16kHz for hotword, 44.1kHz for TTS
+- **Threading:** Separate threads for listening vs processing
+- **Frame Rate:** 100ms hotword detection cycles
 
 ### Machine Learning Performance
-- Porcupine Inference: ~20-30ms per frame (CPU)
-- Face Detection: ~50-100ms per frame
-- Speech-to-Text: ~1-3 seconds (network dependent)
-- TTS Synthesis: ~100-500ms for typical response
+- **Porcupine Inference:** ~20-30ms per frame (CPU)
+- **Face Detection:** ~50-100ms per frame
+- **Speech-to-Text:** ~1-3 seconds (network dependent)
+- **TTS Synthesis:** ~100-500ms for typical response
 
 ### System Resource Usage
-- CPU: 5-8% idle listening, 20-30% during active command
-- Memory: 200-300MB base + 100MB per concurrent operation
-- Disk: ~500MB for models + 50MB for database
-- Network: ~1-2MB per hour for cloud speech recognition
+- **CPU:** 5-8% idle listening, 20-30% during active command
+- **Memory:** 200-300MB base + 100MB per concurrent operation
+- **Disk:** ~500MB for models + 50MB for database
+- **Network:** ~1-2MB per hour for cloud speech recognition
 
 ### Real-time Responsiveness
-- Wake Word Latency: <200ms from audio frame to detection
-- Command Recognition: 2-5 seconds total
-- Action Execution: <500ms for local, 1-5s for network
-- Feedback Generation: <1 second for spoken response
+- **Wake Word Latency:** <200ms from audio frame to detection
+- **Command Recognition:** 2-5 seconds total
+- **Action Execution:** <500ms for local, 1-5s for network
+- **Feedback Generation:** <1 second for spoken response
 
 ### Optimization Tips
 1. Use lower speech timeout for faster responses
@@ -589,72 +593,72 @@ echo ".env" > .gitignore
 
 ### 📌 Microphone Requirements
 
-- Quality: USB microphone recommended
-- Placement: 6-12 inches from mouth
-- Environment: Minimize background noise
-- Testing: Use web dashboard test before deploy
-- Sensitivity: Adjust in system audio settings
+- **Quality:** USB microphone recommended for better speech recognition
+- **Placement:** Keep 6-12 inches from mouth for optimal capture
+- **Environment:** Minimize background noise for accurate recognition
+- **Testing:** Use web dashboard microphone test before deploying
+- **Sensitivity:** Adjust in system audio settings if not detecting
 
 ### 📌 Face Authentication Notes
 
-- Lighting: Ensure well-lit environment
-- Angles: Train with face from different angles
-- Consistency: Facial features should remain stable
-- Failures: Sunglasses, masks, heavy makeup affect recognition
-- Fallback: System allows voice-only if face fails
+- **Lighting:** Ensure well-lit environment for training and authentication
+- **Angles:** Train with face from different angles (left, right, straight)
+- **Consistency:** Facial features should remain relatively stable
+- **Failures:** Sunglasses, heavy makeup, or masks may affect recognition
+- **Fallback:** System allows voice-only authentication if face fails
 
 ### 📌 Platform Compatibility
 
 | Feature | Windows | macOS | Linux |
 |---------|---------|-------|-------|
-| Wake Word | ✅ | ✅ | ✅ |
+| Wake Word Detection | ✅ | ✅ | ✅ |
 | Speech Recognition | ✅ | ✅ | ✅ |
 | System Control | ✅ | 🔄 | 🔄 |
 | Wi-Fi Management | ✅ | 🔄 | 🔄 |
 | Bluetooth Control | ✅ | 🔄 | 🔄 |
-| Face Auth | ✅ | ✅ | ✅ |
+| Face Authentication | ✅ | ✅ | ✅ |
 | Mobile Integration | ✅ | ✅ | ✅ |
 
 ### 📌 Network Dependencies
 
 Works offline EXCEPT:
-- Google Speech-to-Text (requires internet)
-- Weather information (requires API access)
-- YouTube search (requires internet)
-- Mobile ADB (requires USB connection only)
+- **Google Speech-to-Text** — Requires internet for command recognition
+- **Weather Information** — Requires weather API access
+- **YouTube Search** — Requires internet connectivity
+- **Mobile ADB** — Requires USB connection (no internet needed)
 
 ### 📌 Troubleshooting
 
 **Microphone not detected:**
 - Check audio settings in system tray
 - Restart application and grant permissions
-- Test in Windows Settings > Sound
+- Test microphone in Windows Settings > Sound
 
 **Face authentication fails:**
-- Retrain with better lighting
+- Retrain face profile with better lighting
 - Ensure consistent facial features
-- Remove glasses if trained without them
-- Check camera focus and cleanliness
+- Remove glasses or masks if trained without them
+- Check camera focus and lens cleanliness
 
 **Wake word detection slow:**
 - Reduce buffer size (faster but less accurate)
-- Check CPU usage
+- Check CPU usage in Task Manager
 - Close background applications
 - Consider reducing other tasks
 
-**Speech recognition garbage:**
-- Check microphone quality
+**Speech recognition returns garbage:**
+- Check microphone quality and placement
 - Speak more clearly and at normal volume
 - Reduce background noise
 - Check internet connection for cloud STT
 
 ### 📌 Not Production Ready
 
-- This is an advanced prototype for research
-- Use for personal automation only
-- Commands are AI-powered, may occasionally misinterpret
-- Always verify critical commands
-- Consider this a demonstration of AI capabilities
+- This is an **advanced prototype** for research and learning
+- Use for **personal automation** only
+- Commands are **AI-powered**, may occasionally misinterpret
+- Always verify **critical commands** (system shutdown, file deletion)
+- Consider this a **demonstration** of AI capabilities
 
 ---
 
@@ -663,29 +667,29 @@ Works offline EXCEPT:
 ### Short-term Enhancements
 - Offline Speech Recognition (Whisper integration)
 - Custom Wake Words (user-defined training)
-- Command Chaining (execute multiple commands)
+- Command Chaining (execute multiple commands in sequence)
 - Conversation Context (remember previous commands)
 - Improved NLP (better intent classification)
-- Error Recovery (graceful failure handling)
+- Error Recovery (graceful failure handling with retry logic)
 
 ### Medium-term Goals
-- Multi-user Support (different voice profiles)
-- Smart Home Integration (IoT device control)
-- Cloud Backup (optional settings sync)
-- Mobile App (iOS/Android companion)
-- Plugin System (community custom commands)
-- Browser Extension (web app functionality)
-- Real-time Translation (multi-language support)
-- Emotion Detection (voice tone analysis)
+- Multi-user Support (different voice profiles and permissions)
+- Smart Home Integration (control IoT devices via voice)
+- Cloud Backup (optional cloud sync for settings)
+- Mobile App (native iOS/Android companion application)
+- Plugin System (community-created custom commands)
+- Browser Extension (extend functionality to web applications)
+- Real-time Translation (multi-language command support)
+- Emotion Detection (detect user mood from voice tone)
 
 ### Long-term Vision
-- Cross-platform Release (macOS, Linux)
-- Advanced NLP (LLM-powered conversation)
-- Predictive Actions (learn user patterns)
-- Computer Vision (screen content understanding)
-- Advanced Robotics (robot control)
-- Enterprise Edition (corporate deployment)
-- API Marketplace (third-party integration)
+- Cross-platform Release (full macOS and Linux support)
+- Advanced NLP (LLM-powered natural conversation)
+- Predictive Actions (learn user patterns and predict needs)
+- Computer Vision (screen content understanding and interaction)
+- Advanced Robotics (robot control and automation)
+- Enterprise Edition (corporate deployment and management)
+- API Marketplace (third-party integration ecosystem)
 - Ambient AI (always-on passive intelligence)
 
 ---
@@ -721,23 +725,23 @@ Contributions are welcome! Please follow these guidelines:
 
 ### Contribution Areas
 
-- Bug Fixes — Find and fix issues
-- New Commands — Add new voice handlers
-- Documentation — Improve README and comments
-- UI/UX — Enhance frontend design
-- Performance — Optimize speed and resources
-- Testing — Add test coverage
-- Localization — Multi-language support
-- Platform Support — macOS and Linux
+- 🐛 **Bug Fixes** — Find and fix issues
+- ✨ **New Commands** — Add new voice command handlers
+- 📝 **Documentation** — Improve README and code comments
+- 🎨 **UI/UX** — Enhance frontend design and usability
+- ⚡ **Performance** — Optimize speed and resource usage
+- 🧪 **Testing** — Add test coverage and validation
+- 🌍 **Localization** — Multi-language support
+- 🔧 **Platform Support** — macOS and Linux improvements
 
 ### Code Standards
 
-- Follow PEP 8 style guidelines
-- Add docstrings to functions
-- Include comments for complex logic
-- Test on multiple devices
-- Update README if adding features
-- Keep commits atomic and well-described
+- Follow **PEP 8** style guidelines for Python
+- Add **docstrings** to all functions
+- Include **comments** for complex logic
+- Test on **multiple devices** before submitting
+- Update **README** if adding major features
+- Keep **commits atomic** and well-described
 
 ### Development Setup
 
@@ -745,7 +749,7 @@ Contributions are welcome! Please follow these guidelines:
 git clone https://github.com/Adi3182004/ASTRICK.git
 cd ASTRICK
 python -m venv venv
-source venv/bin/activate
+source venv/bin/activate  # or venv\Scripts\activate on Windows
 pip install -r requirements.txt
 
 # Before committing
@@ -758,7 +762,7 @@ flake8 engine/ --max-line-length=100
 
 ## License
 
-This project is licensed under the Educational License for learning and research purposes.
+This project is licensed under the **Educational License** for learning and research purposes.
 
 **Educational License**
 
@@ -777,25 +781,27 @@ This project is provided as-is for educational and research purposes. It demonst
 
 For commercial licensing, contact the author.
 
+See [LICENSE](LICENSE) file for full legal text.
+
 ---
 
 ## Acknowledgments
 
-- **Picovoice** — Porcupine hotword detection
+- **Picovoice** — Porcupine hotword detection engine
 - **Google** — Speech-to-Text API
 - **OpenCV** — Computer vision library
 - **Eel Framework** — Python-JavaScript bridge
-- **PyAutoGUI** — System automation
+- **PyAutoGUI** — System automation capabilities
 - **Contributors** — Everyone improving this project
 
 ---
 
 ## Contact & Support
 
-- **GitHub Issues** — Report bugs or request features
-- **GitHub Discussions** — Ask questions and share ideas
+- **GitHub Issues** — [Report bugs or request features](https://github.com/Adi3182004/ASTRICK/issues)
+- **GitHub Discussions** — [Ask questions and share ideas](https://github.com/Adi3182004/ASTRICK/discussions)
 - **Email** — adirajbhar2004@gmail.com
-- **Twitter** — @adiandhalkar
+- **Twitter** — [@adiandhalkar](https://twitter.com/adiandhalkar)
 
 ---
 
@@ -803,37 +809,41 @@ For commercial licensing, contact the author.
 
 | Metric | Count |
 |--------|-------|
-| Voice Commands | 50+ |
-| API Endpoints | 8+ |
-| Lines of Code | 3000+ |
-| Test Coverage | 60%+ |
-| GitHub Stars | Growing! |
-| Contributors | Welcome! |
+| 🎤 Voice Commands | 50+ |
+| 🔌 API Endpoints | 8+ |
+| 📚 Lines of Code | 3000+ |
+| 🧪 Test Coverage | 60%+ |
+| ⭐ GitHub Stars | Growing! |
+| 👥 Contributors | Welcome! |
 
 ---
 
 ## Learning Resources
 
 This project teaches:
-- Real-time Audio Processing
-- Wake Word Detection
-- Speech Recognition APIs
-- System Automation
-- Face Recognition
-- Full-stack Development
-- Database Management
-- User Interface Design
+- **Real-time Audio Processing** — Continuous microphone streams
+- **Wake Word Detection** — Efficient hotword recognition
+- **Speech Recognition APIs** — Google STT integration
+- **System Automation** — PyAutoGUI and OS module usage
+- **Face Recognition** — OpenCV for biometric authentication
+- **Full-stack Development** — Python backend + JavaScript frontend
+- **Database Management** — SQLite for logging and persistence
+- **User Interface Design** — Modern web UI with Eel framework
 
 ---
 
 **Built with ❤️ for voice intelligence research**
 
-Star this repo if you find it useful!
+⭐ **Star this repo if you find it useful!**
 
 [Report Bug](https://github.com/Adi3182004/ASTRICK/issues) · [Request Feature](https://github.com/Adi3182004/ASTRICK/issues) · [Documentation](https://github.com/Adi3182004/ASTRICK/wiki)
 
-**Part of Real-World AI Systems Series**
+---
 
-"Real AI becomes powerful only when intelligence is connected to real system actions."
+## Part of Real-World AI Systems Series
+
+> **"Real AI becomes powerful only when intelligence is connected to real system actions."**
+
+More production-grade AI projects coming soon. Follow for updates!
 
 Made with Python, Porcupine, and lots of ☕ coffee
