@@ -2,7 +2,7 @@ import os
 import re
 import time
 
-
+DEVICE_ID = "192.168.1.8:5555"
 def extract_yt_term(query):
     query = query.lower()
     query = query.replace("play", "").replace("on youtube", "").replace("youtube", "")
@@ -31,7 +31,7 @@ def keyEvent(key_code):
 
 # Tap event used to tap anywhere on screen
 def tapEvents(x, y):
-    command =  f'adb shell input tap {x} {y}'
+    command = f'adb -s {DEVICE_ID} shell input tap {x} {y}'
     os.system(command)
     time.sleep(1)
 

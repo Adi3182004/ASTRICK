@@ -9,7 +9,7 @@
 import pyautogui
 import time
 
-print("⏳ Move your mouse over the WhatsApp Send button in 5 seconds...")
+print("⏳ Move your mouse over the WhatsApp call button in 5 seconds...")
 time.sleep(5)
 
 pos = pyautogui.position()

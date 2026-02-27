@@ -1,30 +1,37 @@
-
 @echo off
-echo Disconnecting old connections...
-adb disconnect
-echo Setting up connected device
-adb tcpip 5555
-echo Waiting for device to initialize
-timeout 3
-FOR /F "tokens=2" %%G IN ('adb shell ip addr show wlan0 ^|find "inet "') DO set ipfull=%%G
-FOR /F "tokens=1 delims=/" %%G in ("%ipfull%") DO set ip=%%G
-echo Connecting to device with IP %ip%...
-adb connect %ip%
+setlocal
 
-@echo off
+echo ===============================
+echo   ASTRICK ADB QUICK CONNECT
+echo ===============================
 
-rem Set the IP address of your Android device
-set DEVICE_IP=192.168.1.4
-
-rem Set the port number for ADB
+set DEVICE_IP=192.168.1.8
 set ADB_PORT=5555
 
-rem Set the path to the ADB executable
-set ADB_PATH="adb"
+echo Starting ADB server if needed...
+adb start-server >nul 2>&1
 
-rem Restart the ADB server
-%ADB_PATH% kill-server
-%ADB_PATH% start-server
+echo Checking existing connection...
+adb devices | find "%DEVICE_IP%:%ADB_PORT%" >nul
+if %errorlevel%==0 (
+    echo Device already connected.
+    goto :end
+)
 
-rem Connect to the Android device over Wi-Fi
-%ADB_PATH% connect %DEVICE_IP%:%ADB_PORT%
+echo Attempting wireless connection...
+adb connect %DEVICE_IP%:%ADB_PORT% >nul
+
+adb devices | find "%DEVICE_IP%:%ADB_PORT%" >nul
+if %errorlevel%==0 (
+    echo Successfully connected to %DEVICE_IP%.
+) else (
+    echo WARNING: Could not connect to device.
+    echo Make sure:
+    echo   - Phone and PC are on same WiFi
+    echo   - Wireless debugging is enabled
+    echo   - You ran adb tcpip 5555 once via USB
+)
+
+:end
+echo Done.
+exit /b

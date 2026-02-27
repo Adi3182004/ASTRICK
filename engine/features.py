@@ -1,12 +1,14 @@
 import os
-from pipes import quote
 import re
+is_listening = True
+is_awake = False
+WAKE_COOLDOWN = 2.0
+import time
 import shutil
 import winshell          # pip install winshell
 import sqlite3
 import struct
 import subprocess
-import time
 import requests
 import webbrowser
 from playsound import playsound
@@ -17,12 +19,6 @@ import pyautogui
 import pywhatkit as kit
 import pvporcupine
 import json
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.chrome.options import Options
-import time
 from engine.command import speak
 from engine.config import ASSISTANT_NAME
 from engine.helper import extract_yt_term, remove_words, replace_spaces_with_percent_s, goback, keyEvent, tapEvents, adbInput
@@ -46,7 +42,8 @@ def openCommand(query):
     if "recycle bin" in query:
         return  # Let chatBot() route it via action
 
-    if "youtube" in query:
+    
+    if query.strip() == "youtube":
         speak("Opening YouTube")
         webbrowser.open("https://www.youtube.com")
         return
@@ -73,85 +70,48 @@ def openCommand(query):
 
 
 
-import webbrowser
-import pyautogui
-import time
-import pywhatkit as kit
+
 def PlayYoutube(query):
-    import cv2
-    import numpy as np
-    import pytesseract
+    print(">>> PlayYoutube CALLED")
 
     try:
         search_term = extract_yt_term(query)
-        speak(f"Searching YouTube for {search_term}")
 
-        url = f"https://www.youtube.com/results?search_query={search_term.replace(' ', '+')}"
-        os.system(f'start chrome "{url}"')
-        time.sleep(10)
+        if not search_term:
+            search_term = query
 
-        screenshot = pyautogui.screenshot()
-        screenshot_np = cv2.cvtColor(np.array(screenshot), cv2.COLOR_RGB2BGR)
-        data = pytesseract.image_to_data(screenshot_np, output_type=pytesseract.Output.DICT)
+        search_term = re.sub(
+            r"\b(open|on youtube|youtube|video|song|please|play|and)\b",
+            "",
+            search_term,
+            flags=re.IGNORECASE
+        ).strip()
 
-        found_video = False
-        for i, word in enumerate(data['text']):
-            if "views" in word.lower() or "ago" in word.lower():
-                x, y, w, h = data['left'][i], data['top'][i], data['width'][i], data['height'][i]
-                pyautogui.moveTo(x + w // 2, y + h // 2, duration=0.3)
-                pyautogui.click()
-                found_video = True
-                break
-
-        if not found_video:
-            speak("Couldn't detect a video to click. Please try again.")
+        if not search_term:
+            speak("What should I play on YouTube?")
             return
 
-        time.sleep(2)
-        pyautogui.press('f')  # Fullscreen
+        kit.playonyt(search_term)
 
-        ad_skips = 0
-        max_attempts = 25
+        time.sleep(3)
 
-        for attempt in range(max_attempts):
-            time.sleep(1.5)
-
-            screenshot = pyautogui.screenshot(region=(800, 400, 500, 300))  # Wider area
-            screenshot_np = np.array(screenshot)
-
-            gray = cv2.cvtColor(screenshot_np, cv2.COLOR_BGR2GRAY)
-            blur = cv2.GaussianBlur(gray, (5, 5), 0)
-            _, thresh = cv2.threshold(blur, 170, 255, cv2.THRESH_BINARY)
-
-            data = pytesseract.image_to_data(thresh, output_type=pytesseract.Output.DICT)
-
-            for i, word in enumerate(data['text']):
-                if "skip" in word.lower():
-                    x, y, w, h = data['left'][i], data['top'][i], data['width'][i], data['height'][i]
-                    screen_x = 800 + x + w // 2
-                    screen_y = 400 + y + h // 2
-                    pyautogui.moveTo(screen_x, screen_y, duration=0.2)
-                    pyautogui.click()
-                    ad_skips += 1
-                    time.sleep(2)
-                    break  # check for next ad if needed
-
-            if ad_skips >= 2:
-                break
-
-        if ad_skips > 0:
-            speak(f"{ad_skips} ad{'s' if ad_skips > 1 else ''} skipped. Now playing the video.")
-        else:
-            print("No skippable ads found or they were unskippable.")
-            speak("No skippable ads detected. Playing the video.")
+        try:
+            pyautogui.press('f')
+        except:
+            pass
 
     except Exception as e:
         print(f"[PlayYoutube Error]: {e}")
         speak("Something went wrong while trying to play the video.")
 
-import winshell
-import os
-from engine.command import speak
+    finally:
+       global is_listening, is_awake
+       is_listening = True
+       is_awake = False
+        
+        
+
+
 
 def list_recycle_bin():
     files = []
@@ -167,40 +127,112 @@ def delete_all_from_recycle_bin():
 
 def restore_all_from_recycle_bin():
     try:
-        with winshell.recycle_bin() as rb:
-            for item in rb:
-                item.restore()
-        speak("All files have been restored from the recycle bin.")
-        return "All files restored."
+        import win32com.client
+
+        shell = win32com.client.Dispatch("Shell.Application")
+        rb = shell.Namespace(10)
+
+        if rb is None:
+            speak("Recycle bin not accessible.")
+            return "Recycle bin error"
+
+        items = list(rb.Items())
+        if not items:
+            msg = "Recycle bin is already empty."
+            speak(msg)
+            return msg
+
+        restored_count = 0
+
+        for item in items:
+            try:
+                verbs = item.Verbs()
+                restored_here = False
+
+                for v in verbs:
+                    verb_name = v.Name.replace("&", "").lower()
+                    if "restore" in verb_name:
+                        v.DoIt()
+                        restored_here = True
+                        restored_count += 1
+                        break
+
+                if not restored_here:
+                    print(f"[Restore Skip]: No restore verb for {item.Name}")
+
+                time.sleep(0.15)
+
+            except Exception as e:
+                print("[Restore Skip]:", e)
+
+        msg = f"Restored {restored_count} file(s) from recycle bin."
+        print("[Recycle]:", msg)
+        speak(msg)
+        return msg
+
     except Exception as e:
+        print(f"[Restore All Error]: {e}")
         speak("Failed to restore files.")
         return f"Error: {e}"
-
+    
 def restore_file_by_name(file_keyword):
-    file_keyword = file_keyword.lower()
-    restored = False
+    file_keyword = file_keyword.lower().strip()
+
     try:
-        with winshell.recycle_bin() as rb:
-            for item in rb:
-                if file_keyword in item.original_filename().lower():
-                    item.restore()
-                    speak(f"File named {file_keyword} restored from recycle bin.")
-                    restored = True
-                    break
+        import win32com.client
+        shell = win32com.client.Dispatch("Shell.Application")
+        rb = shell.Namespace(10)
+
+        if rb is None:
+            speak("Recycle bin not accessible.")
+            return "Recycle bin error"
+
+        restored = False
+
+        for item in rb.Items():
+            name = item.Name.lower()
+
+            if file_keyword in name:
+                try:
+                    verbs = item.Verbs()
+                    for v in verbs:
+                        verb_name = v.Name.replace("&", "").lower()
+                        if "restore" in verb_name:
+                            v.DoIt()
+                            restored = True
+                            break
+
+                    if restored:
+                        msg = f"Restored {name} from recycle bin."
+                        print("[Recycle]:", msg)
+                        speak(msg)
+                        
+                        break
+                    else:
+                        print("[Restore]: No restore verb found")
+
+                except Exception as e:
+                    print("[Restore Invoke Error]:", e)
+
         if not restored:
-            speak(f"No file matching {file_keyword} found in recycle bin.")
+            msg = f"No file matching {file_keyword} found in recycle bin."
+            print("[Recycle]:", msg)
+            speak(msg)
+            
+            return msg
+
         return "Done"
+
     except Exception as e:
+        print(f"[Restore Error]: {e}")
         speak("Error restoring file.")
         return f"Error: {e}"
 
 
-import pyautogui
-import time
 def toggle_bluetooth_like_user(desired_state):
     import subprocess
-    import pyautogui
-    import time
+    
+   
 
     try:
         x, y = 1703, 676  # Bluetooth toggle coordinates
@@ -248,8 +280,8 @@ def toggle_bluetooth_like_user(desired_state):
         speak("Something went wrong while toggling Bluetooth.")
 
 def toggle_quick_setting(feature, desired_state):
-    import pyautogui
-    import time
+    
+    
 
     try:
         positions = {
@@ -294,8 +326,8 @@ def toggle_quick_setting(feature, desired_state):
         speak(f"Something went wrong while toggling {label}.")
 
 def set_brightness_level(user_input):
-    import pyautogui
-    import time
+  
+    
 
     try:
         # STEP 1: Clean and extract integer percentage
@@ -344,10 +376,12 @@ def hotword():
     porcupine = None
     paud = None
     audio_stream = None
+    last_wake_time = 0
+    WAKE_COOLDOWN = 1.5
+
     try:
         porcupine = pvporcupine.create(
-            keywords=['porcupine'],
-            keyword_paths=["C:\\Users\\adity\\ASTRICK\\engine\\astrick.ppn"],
+            keyword_paths=[r"C:\Users\adity\ASTRICK\engine\astrick.ppn"],
             access_key="vrNHVEul9wGhrr061OLCx/DiGkJjYbcLEhzs5lAF1mFEg3BRX13XxA=="
         )
 
@@ -360,22 +394,35 @@ def hotword():
             frames_per_buffer=porcupine.frame_length
         )
 
-        print("Listening for hotwords...")
+        print("Hotword engine running (always listening)...")
 
         while True:
-            pcm = audio_stream.read(porcupine.frame_length)
+            pcm = audio_stream.read(
+                porcupine.frame_length,
+                exception_on_overflow=False
+            )
             pcm = struct.unpack_from("h" * porcupine.frame_length, pcm)
 
             keyword_index = porcupine.process(pcm)
+
             if keyword_index >= 0:
-                print(f"Hotword detected! Index: {keyword_index}")
-                import pyautogui as autogui
-                autogui.keyDown("win")
-                autogui.press("j")
-                time.sleep(2)
-                autogui.keyUp("win")
+                now = time.time()
+
+                if now - last_wake_time < WAKE_COOLDOWN:
+                    continue
+
+                last_wake_time = now
+                print("Hotword detected!")
+
+                pyautogui.keyDown("win")
+                pyautogui.press("j")
+                pyautogui.keyUp("win")
+
+                time.sleep(0.25)
+
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"[Hotword Error]: {e}")
+
     finally:
         if porcupine:
             porcupine.delete()
@@ -414,6 +461,8 @@ def force_delete_recycle_bin():
         return f"Error: {e}"
 
 def chatBot(query):
+    global is_listening, is_awake
+
     user_input = query.strip().lower()
     json_path = "engine/cookies.json"
 
@@ -451,10 +500,8 @@ def chatBot(query):
 
                 print("[LocalBot]:", response)
                 speak(response)
-                eel.DisplayMessage(response)
-                eel.receiverText(response)
+                
 
-                # Handle actions
                 if action == "shutdown":
                     os.system("shutdown /s /t 1")
                     return response
@@ -467,8 +514,7 @@ def chatBot(query):
                     fallback = "Sorry, I don't understand that yet."
                     print("[LocalBot]:", fallback)
                     speak(fallback)
-                    eel.DisplayMessage(fallback)
-                    eel.receiverText(fallback)
+                    
                     return fallback
 
                 elif action == "weather":
@@ -520,8 +566,7 @@ def chatBot(query):
                         error_msg = "That folder doesn't exist."
                         print("[LocalBot]:", error_msg)
                         speak(error_msg)
-                        eel.DisplayMessage(error_msg)
-                        eel.receiverText(error_msg)
+                        
                         return error_msg
 
                 elif action == "read_pdf":
@@ -530,8 +575,7 @@ def chatBot(query):
                         pdf_name += ".pdf"
 
                     speak(f"Sure, reading {pdf_name} from your Downloads folder.")
-                    eel.DisplayMessage(f"Sure, reading {pdf_name} from your Downloads folder.")
-                    eel.receiverText(f"Sure, reading {pdf_name} from your Downloads folder.")
+                    
 
                     try:
                         path_to_pdf = os.path.join(os.path.expanduser("~"), "Downloads", pdf_name)
@@ -543,8 +587,7 @@ def chatBot(query):
                     reply = read_pdf_file(pdf_name)
                     print("[LocalBot]:", reply)
                     speak(reply)
-                    eel.DisplayMessage(reply)
-                    eel.receiverText(reply)
+                   
                     return reply
 
                 elif action == "restart":
@@ -584,25 +627,24 @@ def chatBot(query):
                         speak("Please tell me the name of the file to delete.")
                         return "File name not provided."
 
-                # Always return response inside matched block
                 return response
 
-        # If nothing matched
         fallback = "Sorry, I don't understand that yet."
         print("[LocalBot]:", fallback)
         speak(fallback)
-        eel.DisplayMessage(fallback)
-        eel.receiverText(fallback)
+        
         return fallback
 
     except Exception as e:
         error_msg = f"LocalBot Error: {e}"
         print(error_msg)
         speak("Something went wrong while processing.")
-        eel.DisplayMessage("Something went wrong while processing.")
-        eel.receiverText("Something went wrong while processing.")
         return error_msg
 
+    finally:
+     global is_listening, is_awake
+     is_listening = True
+     is_awake = False
 
 
 
@@ -687,8 +729,7 @@ def getRainForecast(city="Mumbai"):
 
         print("[Rain Forecast]:\n", ui_forecast)
         speak(speak_forecast)
-        eel.DisplayMessage(ui_forecast)
-        eel.receiverText(ui_forecast)
+        
         return ui_forecast
 
     except Exception as e:
@@ -735,7 +776,7 @@ def read_pdf_file(filename=None):
     import tkinter as tk
     from tkinter import scrolledtext
     import threading
-    import time
+   
 
     downloads_path = os.path.join(os.path.expanduser("~"), "Downloads")
     if not filename:
@@ -834,86 +875,130 @@ def findContact(query):
         speak('not exist in contacts')
         return 0, 0
 
+
 def whatsApp(mobile_no, message, flag, name):
-    import pyautogui, subprocess, time, pyperclip
+   
+    import subprocess
+    import pyperclip
     from urllib.parse import quote
-    import pygetwindow as gw  # for window focus
+    import pygetwindow as gw
 
-    # Action type
-    if flag == 'message':
-        astrick_message = f"Message sent successfully to {name}"
-    elif flag == 'call':
-        message = ''
-        astrick_message = f"Calling {name}"
-    else:
-        message = ''
-        astrick_message = f"Starting video call with {name}"
-
-    # Encode message
-    encoded_message = quote(message)
-    whatsapp_url = f"whatsapp://send?phone={mobile_no}&text={encoded_message}"
-    full_command = f'start "" "{whatsapp_url}"'
-
-    # Open WhatsApp
-    subprocess.run(full_command, shell=True)
-    time.sleep(8)  # wait to load
-
-    # Ensure WhatsApp window is focused
     try:
-        win = gw.getWindowsWithTitle("WhatsApp")[0]
-        if not win.isActive:
-            win.activate()
-            time.sleep(1)
-    except:
-        print("⚠️ Could not focus WhatsApp window. Continuing...")
+        pyautogui.PAUSE = 0.25
+        pyautogui.FAILSAFE = True
 
-    if flag == 'message':
-        sent = False
-        retries = 3
-        for attempt in range(retries):
-            try:
-                # Click near bottom (chatbox area) to ensure focus
-                pyautogui.click(400, 1000)  # adjust y ~ bottom of screen
-                time.sleep(0.5)
+        mobile_no = mobile_no.replace(" ", "")
 
-                # Paste message
-                pyperclip.copy(message)
-                pyautogui.hotkey("ctrl", "v")
-                time.sleep(0.5)
-
-                # Press Enter to send
-                pyautogui.press("enter")
-                time.sleep(2)
-
-                sent = True
-                break
-            except Exception as e:
-                print(f"Retry {attempt+1} failed: {e}")
-                time.sleep(3)
-
-        if not sent:
-            print("❌ Failed to send message after retries.")
+        if flag == 'message':
+            astrick_message = f"Message sent successfully to {name}"
+        elif flag == 'call':
+            astrick_message = f"Calling {name} on WhatsApp"
         else:
-            print("✅ Message sent successfully.")
+            astrick_message = f"Starting video call with {name}"
 
-    else:
-        # Call / Video Call handling
-        pyautogui.hotkey('ctrl', 'f')
-        target_tab = 7 if flag == 'call' else 6
-        for _ in range(1, target_tab):
-            pyautogui.hotkey('tab')
-            time.sleep(0.2)
-        pyautogui.hotkey('enter')
+        encoded_message = quote(message)
+        whatsapp_url = f"whatsapp://send?phone={mobile_no}&text={encoded_message}"
+        subprocess.run(f'start "" "{whatsapp_url}"', shell=True)
 
-    speak(astrick_message)
+        time.sleep(9)
 
+        try:
+            wins = gw.getWindowsWithTitle("WhatsApp")
+            if wins:
+                wins[0].activate()
+                time.sleep(1)
+        except:
+            pass
+
+        if flag == 'message':
+            sent = False
+            retries = 3
+
+            for _ in range(retries):
+                try:
+                    pyautogui.click(520, 1180)
+                    time.sleep(0.7)
+
+                    pyperclip.copy(message)
+                    pyautogui.hotkey("ctrl", "v")
+                    time.sleep(0.9)
+
+                    pyautogui.click(1890, 995)
+                    time.sleep(1.5)
+
+                    sent = True
+                    break
+                except:
+                    time.sleep(2)
+
+            if not sent:
+                speak("I could not send the WhatsApp message")
+                return
+
+            speak(astrick_message)
+            return
+
+        if flag == 'call':
+            time.sleep(2)
+
+            try:
+                wins = gw.getWindowsWithTitle("WhatsApp")
+                if wins:
+                    wins[0].activate()
+                    time.sleep(0.8)
+            except:
+                pass
+
+            pyautogui.click(1753, 78)
+            time.sleep(1.2)
+            pyautogui.click(1546, 192)
+            speak(astrick_message)
+            return
+
+        if flag == 'video call':
+            time.sleep(2)
+
+            try:
+                wins = gw.getWindowsWithTitle("WhatsApp")
+                if wins:
+                    wins[0].activate()
+                    time.sleep(0.8)
+            except:
+                pass
+
+            pyautogui.click(1753, 78)
+            time.sleep(1.2)
+            pyautogui.click(1717, 188)
+            speak(astrick_message)
+            return
+
+    except Exception as e:
+        print(f"[WhatsApp Error]: {e}")
+        speak("WhatsApp operation failed")
 
 def makeCall(name, mobileNo):
+    import subprocess
     mobileNo = mobileNo.replace(" ", "")
     speak("Calling " + name)
-    command = ['adb', 'shell', 'am', 'start', '-a', 'android.intent.action.CALL', '-d', f'tel:{mobileNo}']
+
+    command = [
+        'adb',
+        'shell',
+        'am',
+        'start',
+        '-a',
+        'android.intent.action.CALL',
+        '-d',
+        f'tel:{mobileNo}'
+    ]
+
     try:
-        subprocess.run(command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+        subprocess.run(
+            command,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            check=True
+        )
     except subprocess.CalledProcessError as e:
         speak("Failed to make the call. Please check the connection.")
         print(f"Error: {e}")
@@ -935,35 +1020,53 @@ def sendMessage(message, mobileNo, name):
     speak("message send successfully to " + name)
 
 
-
 def delete_file_by_name(file_keyword):
-    import winshell
-    file_keyword = file_keyword.lower()
-    deleted = False
-    try:
-        rb = winshell.recycle_bin()
-        for item in rb:
-            original_name = item.original_filename().lower()
-            if file_keyword in original_name:
-                try:
-                    item.delete(no_confirm=True)
-                except:
-                    winshell.delete_file(item.filename, no_confirm=True, recycle=False)
+    file_keyword = file_keyword.lower().strip()
 
-                speak(f"File named {file_keyword} deleted from recycle bin.")
-                eel.DisplayMessage(f"Deleted '{file_keyword}'.")
-                eel.receiverText(f"Deleted '{file_keyword}'.")
-                deleted = True
-                break
+    try:
+        import win32com.client
+        import winshell
+
+        shell = win32com.client.Dispatch("Shell.Application")
+        rb = shell.Namespace(10)
+
+        if rb is None:
+            speak("Recycle bin not accessible.")
+            return "Recycle bin error"
+
+        deleted = False
+
+        for item in list(rb.Items()):
+            name = item.Name.lower()
+
+            if file_keyword in name:
+                try:
+                    winshell.delete_file(item.Path, no_confirm=True)
+                    deleted = True
+
+                    msg = f"Deleted {name} from recycle bin."
+                    print("[Recycle]:", msg)
+                    speak(msg)
+                    
+                    break
+
+                except Exception as e:
+                    print("[Delete Force Error]:", e)
 
         if not deleted:
-            speak(f"No file matching {file_keyword} found in recycle bin.")
+            msg = f"No file matching {file_keyword} found in recycle bin."
+            print("[Recycle]:", msg)
+            speak(msg)
+            
+            return msg
+
         return "Done"
 
     except Exception as e:
-        speak("Error deleting file.")
         print(f"[Delete Error]: {e}")
+        speak("Error deleting file.")
         return f"Error: {e}"
+
 
 def recycle_bin_prompt():
     try:
@@ -974,8 +1077,7 @@ def recycle_bin_prompt():
         prompt = "Recycle bin is open. Would you like to delete all, restore all, or restore a specific file?"
         print("[LocalBot]:", prompt)
         speak(prompt)
-        eel.DisplayMessage(prompt)
-        eel.receiverText(prompt)
+        
 
         try:
             eel.startListening()

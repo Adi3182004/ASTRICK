@@ -3,7 +3,7 @@ import subprocess
 import eel
 
 # Initialize Eel
-eel.init('web')  # Replace 'web' with your actual folder containing HTML/JS files
+eel.init('www')  # Replace 'web' with your actual folder containing HTML/JS files
 
 # Print registered functions to verify Eel initialization
 print("Registered functions (before processes):", eel._exposed_functions.keys())
